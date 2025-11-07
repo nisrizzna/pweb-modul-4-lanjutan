@@ -37,14 +37,12 @@ function App() {
           <Route path="/transactions" element={<TransactionList />} />
           <Route path="/transactions/:id" element={<TransactionDetail />} />
         </Route>
-      </Route>
-      
-      {/* Rute jika halaman tidak ditemukan */}
-      <Route path="*" element={
-        <Layout>
+
+        {/* Rute jika halaman tidak ditemukan */}
+        <Route path="*" element={
           <div style={{padding: '20px'}}>404 Not Found</div>
-        </Layout>
-      } /> 
+        } />
+      </Route>
     </Routes>
   );
 }

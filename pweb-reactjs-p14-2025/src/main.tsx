@@ -3,7 +3,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
-import './index.css'; // Kamu bisa hapus/styling ulang file ini nanti
+import './index.css';
+import './styles/global.css';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.tsx'; // Import provider kita
 

@@ -13,8 +13,8 @@ import AddBook from './pages/AddBook';
 // Nanti ini akan diganti file asli oleh mereka
 const BookList = () => <div style={{padding: '20px'}}>Halaman List Buku (Tugas Orang 2)</div>;
 const BookDetail = () => <div style={{padding: '20px'}}>Halaman Detail Buku (Tugas Orang 2)</div>;
-const TransactionList = () => <div style={{padding: '20px'}}>Halaman List Transaksi (Tugas Orang 3)</div>;
-const TransactionDetail = () => <div style={{padding: '20px'}}>Halaman Detail Transaksi (Tugas Orang 3)</div>;
+import TransactionList from './pages/TransactionList'; // <-- GANTI JADI INI
+import TransactionDetail from './pages/TransactionDetail'; // <-- GANTI JADI INI
 
 
 function App() {

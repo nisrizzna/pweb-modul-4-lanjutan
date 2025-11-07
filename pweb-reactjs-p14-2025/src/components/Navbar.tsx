@@ -17,63 +17,47 @@ const Navbar = () => {
     navigate('/auth/login'); 
   };
 
-  // Styling sederhana
-  const navStyle: React.CSSProperties = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '10px 20px',
-    backgroundColor: '#f0f0f0',
-    borderBottom: '1px solid #ccc',
-  };
-
-  const linkStyle: React.CSSProperties = {
-    margin: '0 10px',
-    textDecoration: 'none',
-    color: 'blue',
-  };
-
   return (
-    <nav style={navStyle}>
+    <nav className="navbar">
       {/* Link di sisi kiri */}
       <div>
-        <Link to="/" style={linkStyle}>
+        <Link to="/" className="navbar-brand">
           IT Literature Shop
         </Link>
-        
+      </div>
+
+      {/* Menu navigasi */}
+      <div className="navbar-nav">
         {/* Tampilkan link ini HANYA jika sudah login */}
         {isAuthenticated && (
           <>
-            <Link to="/transactions" style={linkStyle}>
+            <Link to="/transactions" className="nav-link">
               Transaksi
             </Link>
-            <Link to="/add-book" style={linkStyle}>
+            <Link to="/add-book" className="nav-link">
               Tambah Buku
             </Link>
           </>
         )}
-      </div>
 
-      {/* Info user di sisi kanan */}
-      <div>
-        {/* Gunakan conditional rendering */}
+        {/* Info user di sisi kanan */}
         {isAuthenticated ? (
           // === JIKA SUDAH LOGIN ===
           <>
-            <span style={{ marginRight: '15px' }}>
-              Hi, {user?.email} {/* Menampilkan email user */}
+            <span className="nav-link">
+              Hi, {user?.email}
             </span>
-            <button onClick={handleLogout}>
+            <button onClick={handleLogout} className="form-button" style={{ width: 'auto', padding: '8px 16px' }}>
               Logout
             </button>
           </>
         ) : (
           // === JIKA BELUM LOGIN ===
           <>
-            <Link to="/auth/login" style={linkStyle}>
+            <Link to="/auth/login" className="nav-link">
               Login
             </Link>
-            <Link to="/auth/register" style={linkStyle}>
+            <Link to="/auth/register" className="nav-link">
               Register
             </Link>
           </>

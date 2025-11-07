@@ -2,7 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api'; // Import api service kita (Langkah 4)
+import api from '../services/api';
+import LoadingSpinner from '../components/LoadingSpinner';
+import AlertMessage from '../components/AlertMessage';
+import EmptyState from '../components/EmptyState';
 
 // Tipe data untuk Genre (sesuai API /genres)
 interface Genre {
@@ -126,52 +129,38 @@ const AddBook = () => {
     }
   };
   
-  // Styling sederhana
-  const formStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    maxWidth: '600px',
-    margin: '20px auto',
-  };
-  const inputGroup: React.CSSProperties = {
-      marginBottom: '15px',
-      display: 'flex',
-      flexDirection: 'column'
-  };
-
   return (
-    <div style={formStyle}>
-      <h2>Tambah Buku Baru</h2>
+    <div className="form-container">
+      <h2 className="page-header">Tambah Buku Baru</h2>
       <form onSubmit={handleSubmit}>
         
-        {/* Field Wajib (sesuai API Doc) */}
-        <div style={inputGroup}>
+        {/* Field Wajib */}
+        <div className="form-group">
           <label>Judul Buku (Title):*</label>
           <input type="text" name="title" value={formData.title} onChange={handleChange} />
         </div>
-        <div style={inputGroup}>
-          {/* Note: Prompt bilang 'Writer', API Doc bilang 'author'. Kita pakai 'author' */}
+        <div className="form-group">
           <label>Penulis (Author):*</label> 
           <input type="text" name="author" value={formData.author} onChange={handleChange} />
         </div>
-        <div style={inputGroup}>
+        <div className="form-group">
           <label>Deskripsi:*</label>
           <textarea name="description" value={formData.description} onChange={handleChange} rows={4} />
         </div>
-        <div style={inputGroup}>
+        <div className="form-group">
           <label>Harga (Price):*</label>
           <input type="number" name="price" value={formData.price} onChange={handleChange} min="0" />
         </div>
-        <div style={inputGroup}>
+        <div className="form-group">
           <label>Stok (Stock):*</label>
           <input type="number" name="stock" value={formData.stock} onChange={handleChange} min="0" />
         </div>
         
         {/* Dropdown Genre */}
-        <div style={inputGroup}>
+        <div className="form-group">
           <label>Genre:*</label>
           {genreLoading ? (
-            <p>Loading genres...</p>
+            <LoadingSpinner />
           ) : (
             <select name="genreId" value={formData.genreId} onChange={handleChange} required>
               <option value="" disabled>Pilih Genre</option>
@@ -182,7 +171,7 @@ const AddBook = () => {
                   </option>
                 ))
               ) : (
-                <option disabled>Tidak ada genre tersedia</option> // Empty state
+                <EmptyState message="Tidak ada genre tersedia" />
               )}
             </select>
           )}
@@ -192,23 +181,23 @@ const AddBook = () => {
         <hr style={{margin: '20px 0'}}/>
         <h3>Data Opsional</h3>
 
-        <div style={inputGroup}>
+        <div className="form-group">
           <label>Penerbit (Publisher):</label>
           <input type="text" name="publisher" value={formData.publisher} onChange={handleChange} />
         </div>
-        <div style={inputGroup}>
+        <div className="form-group">
           <label>Tahun Publikasi:</label>
           <input type="number" name="publication_year" value={formData.publication_year} onChange={handleChange} max={new Date().getFullYear()} />
         </div>
-         <div style={inputGroup}>
+        <div className="form-group">
           <label>ISBN:</label>
           <input type="text" name="isbn" value={formData.isbn} onChange={handleChange} />
         </div>
         
-        {/* Tampilkan error global jika ada */}
-        {error && <p style={{ color: 'red', border: '1p solid red', padding: '10px' }}>{error}</p>}
+        {/* Error message */}
+        {error && <AlertMessage message={error} type="error" />}
         
-        <button type="submit" disabled={loading || genreLoading} style={{padding: '10px', fontSize: '16px'}}>
+        <button type="submit" disabled={loading || genreLoading} className="form-button">
           {loading ? 'Menyimpan...' : 'Simpan Buku'}
         </button>
       </form>

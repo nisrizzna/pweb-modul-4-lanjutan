@@ -16,7 +16,7 @@ interface Genre {
 // Tipe data untuk state form
 interface BookFormData {
   title: string;
-  author: string; // Sesuai API Doc ('author')
+  writer: string; // API menggunakan 'writer' bukan 'author'
   description: string;
   price: number;
   stock: number;
@@ -31,7 +31,7 @@ interface BookFormData {
 const AddBook = () => {
   const [formData, setFormData] = useState<BookFormData>({
     title: '',
-    author: '',
+    writer: '',
     description: '',
     price: 0,
     stock: 0,
@@ -91,9 +91,9 @@ const AddBook = () => {
     setLoading(true);
 
     // Validasi client-side
-    const { title, author, description, price, stock, genreId } = formData;
-    if (!title || !author || !description || !genreId || price <= 0 || stock < 0) {
-      setError('Field wajib (Title, Author, Description, Genre, Price, Stock) harus diisi dengan benar.');
+    const { title, writer, description, price, stock, genreId } = formData;
+    if (!title || !writer || !description || !genreId || price <= 0 || stock < 0) {
+      setError('Field wajib (Title, Writer, Description, Genre, Price, Stock) harus diisi dengan benar.');
       setLoading(false);
       return;
     }
@@ -102,7 +102,7 @@ const AddBook = () => {
       // Kirim data ke API (sesuai dokumentasimu)
       await api.post('/books', {
         title: formData.title,
-        author: formData.author,
+        writer: formData.writer,
         description: formData.description,
         price: formData.price,
         stock: formData.stock,
@@ -140,8 +140,8 @@ const AddBook = () => {
           <input type="text" name="title" value={formData.title} onChange={handleChange} />
         </div>
         <div className="form-group">
-          <label>Penulis (Author):*</label> 
-          <input type="text" name="author" value={formData.author} onChange={handleChange} />
+          <label>Penulis (Writer):*</label> 
+          <input type="text" name="writer" value={formData.writer} onChange={handleChange} />
         </div>
         <div className="form-group">
           <label>Deskripsi:*</label>

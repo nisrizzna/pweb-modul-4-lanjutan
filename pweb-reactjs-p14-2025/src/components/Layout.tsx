@@ -1,26 +1,21 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom'; // 1. Import Outlet
+import { Outlet } from 'react-router-dom';
+import Navbar from './Navbar';
 
-// 2. Definisikan tipe props agar bisa menerima 'children'
-//    Kita buat opsional (pakai '?') karena rute utama tidak mengirim 'children'
+// Definisikan tipe props agar bisa menerima 'children'
 type LayoutProps = {
   children?: React.ReactNode;
 };
 
-// 3. Terima { children } sebagai prop
+// Terima { children } sebagai prop
 const Layout = ({ children }: LayoutProps) => {
   return (
     <div>
-      {/* Navbar Anda bisa ditaruh di sini */}
-      <nav style={{ padding: '10px', background: '#eee' }}>
-        Ini Navbar (dari Layout)
-      </nav>
+      {/* Navbar */}
+      <Navbar />
 
       {/* Konten Halaman */}
       <main>
-        {/* 4. Tampilkan 'children' JIKA ADA (ini untuk halaman 404 Anda)
-             JIKA TIDAK, tampilkan <Outlet /> (ini untuk rute nested seperti BookList)
-        */}
         {children ? children : <Outlet />}
       </main>
     </div>

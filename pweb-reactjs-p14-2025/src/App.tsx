@@ -4,17 +4,15 @@ import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
-// Import halaman-halaman (NANTI KITA BUAT)
+// Import halaman-halaman
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AddBook from './pages/AddBook';
-
-// Placeholder untuk halaman Orang 2 & 3 (biar tidak error)
-// Nanti ini akan diganti file asli oleh mereka
-const BookList = () => <div style={{padding: '20px'}}>Halaman List Buku (Tugas Orang 2)</div>;
-const BookDetail = () => <div style={{padding: '20px'}}>Halaman Detail Buku (Tugas Orang 2)</div>;
-import TransactionList from './pages/TransactionList'; // <-- GANTI JADI INI
-import TransactionDetail from './pages/TransactionDetail'; // <-- GANTI JADI INI
+import BooksList from './pages/BooksList';
+import BookDetail from './pages/BookDetail';
+import Checkout from './pages/Checkout';
+import TransactionList from './pages/TransactionList';
+import TransactionDetail from './pages/TransactionDetail';
 
 
 function App() {
@@ -28,12 +26,13 @@ function App() {
       {/* Rute yang menggunakan Layout (punya Navbar) */}
       <Route path="/" element={<Layout />}>
         {/* Halaman utama langsung di '/' */}
-        <Route index element={<BookList />} /> 
+        <Route index element={<BooksList />} /> 
         <Route path="/books/:id" element={<BookDetail />} />
         
         {/* Rute yang HANYA bisa diakses setelah login */}
         <Route element={<ProtectedRoute />}>
           <Route path="/add-book" element={<AddBook />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/transactions" element={<TransactionList />} />
           <Route path="/transactions/:id" element={<TransactionDetail />} />
         </Route>

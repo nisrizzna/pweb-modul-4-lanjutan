@@ -1,17 +1,25 @@
 // src/pages/TransactionList.tsx
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import AlertMessage from '../components/AlertMessage';
 import EmptyState from '../components/EmptyState';
 
-// Tipe data Transaksi (sesuai API-mu)
+// Tipe data Transaksi (sesuai API response)
 interface Transaction {
-  id: string; // atau number
-  amount: number; // Ini adalah total harga
-  createdAt: string; // atau Date
+  id: string;
+  created_at: string;
+  user_id: string;
+  order_items: Array<{
+    id: string;
+    quantity: number;
+    books: {
+      title: string;
+      price: string;
+    }
+  }>;
 }
 
 const TransactionList = () => {
@@ -32,15 +40,34 @@ const TransactionList = () => {
 
         // API Doc-mu tidak bilang support sort, jadi ini mungkin perlu
         // penyesuaian di backend atau sorting manual di frontend
-        const [orderBy, order] = sort.split('-');
-        params.append('orderBy', orderBy);
-        params.append('order', order);
+        // Sort params (backend might not support, so we'll sort client-side)
+        // params.append('sort', sort);
 
         // Panggil API (Otomatis pakai token)
         const response = await api.get('/transactions', { params });
 
         if (response.data && response.data.data) {
-          setTransactions(response.data.data);
+          let txData = response.data.data;
+          
+          // Client-side sorting karena API mungkin tidak support
+          const [orderBy, order] = sort.split('-');
+          if (orderBy === 'createdAt') {
+            txData = [...txData].sort((a, b) => {
+              const dateA = new Date(a.created_at).getTime();
+              const dateB = new Date(b.created_at).getTime();
+              return order === 'desc' ? dateB - dateA : dateA - dateB;
+            });
+          } else if (orderBy === 'amount') {
+            txData = [...txData].sort((a, b) => {
+              const amountA = a.order_items?.reduce((sum: number, item: any) => 
+                sum + (Number(item.books.price) * item.quantity), 0) || 0;
+              const amountB = b.order_items?.reduce((sum: number, item: any) => 
+                sum + (Number(item.books.price) * item.quantity), 0) || 0;
+              return order === 'desc' ? amountB - amountA : amountA - amountB;
+            });
+          }
+          
+          setTransactions(txData);
         } else {
           setTransactions([]);
         }
@@ -98,16 +125,23 @@ const TransactionList = () => {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((tx) => (
-              <tr key={tx.id}>
-                <td style={tableCell}>{tx.id}</td>
-                <td style={tableCell}>{new Date(tx.createdAt).toLocaleString('id-ID')}</td>
-                <td style={tableCell}>Rp {tx.amount.toLocaleString('id-ID')}</td>
-                <td style={tableCell}>
-                  <Link to={`/transactions/${tx.id}`}>Lihat Detail</Link>
-                </td>
-              </tr>
-            ))}
+            {transactions.map((tx) => {
+              // Hitung total amount dari order_items
+              const totalAmount = tx.order_items?.reduce((sum, item) => {
+                return sum + (Number(item.books.price) * item.quantity);
+              }, 0) || 0;
+
+              return (
+                <tr key={tx.id}>
+                  <td style={tableCell}>{tx.id}</td>
+                  <td style={tableCell}>{new Date(tx.created_at).toLocaleString('id-ID')}</td>
+                  <td style={tableCell}>Rp {totalAmount.toLocaleString('id-ID')}</td>
+                  <td style={tableCell}>
+                    <Link to={`/transactions/${tx.id}`}>Lihat Detail</Link>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}

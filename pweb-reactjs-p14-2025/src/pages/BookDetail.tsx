@@ -1,7 +1,7 @@
 // src/pages/BookDetail.tsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import  getter  from "../services/api";
+import { getter } from "../services/api";
 import { useCart } from "../context/CartContext";
 
 export default function BookDetail() {
@@ -17,9 +17,10 @@ export default function BookDetail() {
       try {
         setIsLoading(true);
         const response = await getter(`/books/${id}`);
-        setBook(response.data);
+        // getter sudah return response.data.data, jadi langsung set
+        setBook(response);
       } catch (err: any) {
-        setError(err.message);
+        setError(err.message || 'Gagal memuat detail buku');
       } finally {
         setIsLoading(false);
       }

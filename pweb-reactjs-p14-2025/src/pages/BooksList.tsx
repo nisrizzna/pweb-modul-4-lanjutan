@@ -4,7 +4,7 @@ import { getter } from "../services/api";
 import BookCard from "../components/BookCard";
 
 export default function BooksList() {
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,17 +27,58 @@ export default function BooksList() {
       setError(null);
       // Buat query string
       const params = new URLSearchParams();
-      params.append("search", searchTerm);
-      params.append("sort", sortBy);
+      if (searchTerm) params.append("search", searchTerm);
+      if (sortBy) params.append("sort", sortBy);
       params.append("page", page.toString());
 
       const response = await getter(`/books?${params.toString()}`);
       
-      // Asumsi API mengembalikan { data: [..], totalPages: X }
-      setBooks(response.data); 
-      setTotalPages(response.totalPages);
+      // Response structure: { books: [...], pagination: {...} }
+      // getter() sudah return response.data.data
+      console.log('API Response:', response); // Debug
+      
+      if (response.books && Array.isArray(response.books)) {
+        // Struktur: { books: [...], pagination: {...} }
+        setBooks(response.books);
+        setTotalPages(response.pagination?.totalPages || 1);
+      } else if (Array.isArray(response)) {
+        // Jika langsung array
+        setBooks(response);
+        setTotalPages(1);
+      } else {
+        console.error('Unexpected response structure:', response);
+        setBooks([]);
+        setTotalPages(1);
+      }
     } catch (err: any) {
-      setError(err.message);
+      console.error('Error fetching books:', err);
+      let errorMessage = 'Gagal memuat data buku. ';
+      
+      if (err.response) {
+        // Error dari API (4xx, 5xx)
+        const status = err.response.status;
+        const apiMessage = err.response.data?.message;
+        const contentType = err.response.headers?.['content-type'];
+        
+        // Cek apakah response adalah HTML (backend yang salah)
+        if (contentType && contentType.includes('text/html')) {
+          errorMessage = '❌ BACKEND YANG SALAH SEDANG RUNNING! Response dari port 3000 adalah HTML (kemungkinan Angular/frontend lain), bukan JSON API. Lihat SOLUSI_BACKEND_SALAH.md';
+        } else if (status === 500) {
+          errorMessage += '❌ Server Error (500). Kemungkinan: Database belum jalan, migration belum dijalankan, atau backend crash. Cek terminal backend!';
+        } else if (status === 404) {
+          errorMessage += '❌ Endpoint tidak ditemukan. Pastikan backend API running di port 3000.';
+        } else {
+          errorMessage += apiMessage || `Error ${status}`;
+        }
+      } else if (err.request) {
+        // Request dibuat tapi tidak ada response
+        errorMessage += '❌ Backend tidak merespons. Pastikan Express API server di http://localhost:3000 sudah jalan!';
+      } else {
+        // Error lainnya
+        errorMessage += err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -74,8 +115,33 @@ export default function BooksList() {
       </div>
 
       {/* Loading & Error State */}
-      {isLoading && <p>Loading buku...</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
+      {isLoading && (
+        <div className="text-center py-8">
+          <p className="text-xl">⏳ Loading buku...</p>
+        </div>
+      )}
+      {error && (
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-6 mb-6 rounded">
+          <p className="font-bold text-lg mb-2">⚠️ Terjadi Kesalahan</p>
+          <p className="mb-4">{error}</p>
+          <div className="bg-white p-4 rounded border border-red-300">
+            <p className="font-semibold mb-2">🔧 Langkah debugging:</p>
+            <ol className="list-decimal ml-5 space-y-1">
+              <li>Pastikan backend API running di <code className="bg-gray-200 px-2 py-1 rounded">http://localhost:3000</code></li>
+              <li>Cek database sudah jalan (PostgreSQL/MySQL)</li>
+              <li>Jalankan migration: <code className="bg-gray-200 px-2 py-1 rounded">npm run migrate</code></li>
+              <li>Jalankan seeder: <code className="bg-gray-200 px-2 py-1 rounded">npm run seed</code></li>
+              <li>Cek log backend untuk error detail</li>
+            </ol>
+          </div>
+          <button 
+            onClick={fetchBooks}
+            className="mt-4 bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700"
+          >
+            🔄 Coba Lagi
+          </button>
+        </div>
+      )}
 
       {/* List Buku */}
       {!isLoading && !error && (

@@ -1,7 +1,7 @@
 // src/components/BookCard.tsx
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import  deleter  from "../services/api";
+import { deleter } from "../services/api";
 
 type Props = {
   book: any;

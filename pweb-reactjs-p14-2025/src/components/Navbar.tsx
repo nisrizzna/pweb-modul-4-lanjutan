@@ -1,12 +1,13 @@
 // src/components/Navbar.tsx
 
-import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import hook kita
+import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
   // Ambil state dan fungsi dari AuthContext
   const { user, logout, isAuthenticated } = useAuth();
+  const { cart } = useCart();
   const navigate = useNavigate();
 
   // Fungsi ini akan dipanggil saat tombol Logout diklik
@@ -28,6 +29,11 @@ const Navbar = () => {
 
       {/* Menu navigasi */}
       <div className="navbar-nav">
+        {/* Link Keranjang - tampil untuk semua user */}
+        <Link to="/checkout" className="nav-link">
+          🛒 Keranjang ({cart.length})
+        </Link>
+        
         {/* Tampilkan link ini HANYA jika sudah login */}
         {isAuthenticated && (
           <>

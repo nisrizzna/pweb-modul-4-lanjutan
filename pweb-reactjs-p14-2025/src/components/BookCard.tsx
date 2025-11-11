@@ -1,7 +1,7 @@
 // src/components/BookCard.tsx
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { deleter } from "../services/api";
+import  deleter  from "../services/api";
 
 type Props = {
   book: any;
@@ -26,7 +26,7 @@ export default function BookCard({ book, onDeleteSuccess }: Props) {
       }
 
       // 3. Panggil API
-      await deleter(`/books/${book.id}`, token);
+      await deleter(`/books/${book.id}`); // ✅ BENAR, Interceptor akan menangani token
       
       // 4. Beri tahu parent (BooksList) untuk refresh
       alert("Buku berhasil dihapus.");

@@ -1,7 +1,7 @@
 // src/pages/BookDetail.tsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getter } from "../services/api";
+import  getter  from "../services/api";
 import { useCart } from "../context/CartContext";
 
 export default function BookDetail() {

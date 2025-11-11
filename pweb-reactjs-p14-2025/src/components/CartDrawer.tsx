@@ -1,6 +1,6 @@
 // src/components/CartDrawer.tsx
 import { useCart } from "../context/CartContext";
-import { poster } from "../services/api";
+import  poster  from "../services/api";
 
 type Props = {
   isOpen: boolean;
